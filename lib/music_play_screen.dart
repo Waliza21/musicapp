@@ -10,12 +10,63 @@ class MusicPlayScreen extends StatefulWidget {
 
 class _MusicPlayScreenState extends State<MusicPlayScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final List<Song> _playList = [];
+  final List<Song> _playList = [
+    Song(
+      songName: 'Hellow',
+      artistName: 'Santa Maria',
+      songUrl: 'https://samplelib.com/lib/preview/mp3/sample-3s.mp3',
+      durationSecond: 3,
+    ),
+    Song(
+      songName: 'Hellow 2',
+      artistName: 'Santa Maria 2',
+      songUrl: 'https://samplelib.com/lib/preview/mp3/sample-6s.mp3',
+      durationSecond: 6,
+    ),
+    Song(
+      songName: 'Ola',
+      artistName: 'Helena Amanda',
+      songUrl: 'https://samplelib.com/lib/preview/mp3/sample-9s.mp3',
+      durationSecond: 9,
+    ),
+    Song(
+      songName: 'Ola 2',
+      artistName: 'Helena Amanda 2',
+      songUrl: 'https://samplelib.com/lib/preview/mp3/sample-12s.mp3',
+      durationSecond: 12,
+    ),
+    Song(
+      songName: 'Ola 3',
+      artistName: 'Helena Amanda 3',
+      songUrl: 'https://samplelib.com/lib/preview/mp3/sample-19s.mp3',
+      durationSecond: 19,
+    ),
+  ];
   int _currentIndex = 0;
   bool _isPlaying = false;
 
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
+
+  @override
+  void initState() {
+    _listenToPlayer();
+    super.initState();
+  }
+
+  void _listenToPlayer() {
+    _audioPlayer.onDurationChanged.listen((duration) {
+      setState(() => _duration = duration);
+    });
+    _audioPlayer.onPositionChanged.listen((position) {
+      setState(() => _position = position);
+    });
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() => _isPlaying = state == PlayerState.playing);
+    });
+
+    _audioPlayer.onPlayerComplete.listen((_) => _next());
+  }
 
   Future<void> _playSong(int index) async {
     _currentIndex = index;
@@ -47,6 +98,12 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
     } else {
       await _audioPlayer.resume();
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    final int minutes = duration.inMinutes;
+    final int seconds = duration.inSeconds.remainder(60);
+    return "$minutes:${seconds.toString().padLeft(2, "0")}";
   }
 
   @override
@@ -86,13 +143,15 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: ListView.builder(
-              itemCount: 3,
+              itemCount: _playList.length,
               itemBuilder: (context, index) {
+                final Song song = _playList[index];
                 return ListTile(
-                  title: Text("Song title"),
-                  subtitle: Text("Artist Name"),
+                  title: Text(song.songName),
+                  subtitle: Text(song.artistName),
                   trailing: Icon(Icons.skip_next),
-                  leading: Text("Number"),
+                  // leading: Text("${_playList[index]}"),
+                  onTap: () => _playSong(index),
                 );
               },
             ),
