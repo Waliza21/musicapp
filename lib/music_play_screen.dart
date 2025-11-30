@@ -127,21 +127,27 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
           Card(
             child: Column(
               children: [
-                Text("Song Name"),
-                Text("Artist Name"),
+                Text(song.songName),
+                Text(song.artistName),
                 Slider(value: 0, onChanged: (value) {}),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text("Current time"), Text("total duration")],
+                  children: [
+                    Text(_formatDuration(_position)),
+                    Text(_formatDuration(_duration)),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: _previous,
                       icon: Icon(Icons.skip_previous),
                     ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.play_arrow)),
+                    IconButton(
+                      onPressed: _togglePlayer,
+                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    ),
                     IconButton(onPressed: () {}, icon: Icon(Icons.skip_next)),
                   ],
                 ),
