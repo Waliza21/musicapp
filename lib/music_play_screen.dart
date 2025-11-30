@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
@@ -108,6 +110,12 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Song song = _playList[_currentIndex];
+    final double maxSecond = max(_duration.inSeconds.toDouble(), 1);
+    final double currentSecond = _position.inSeconds.toDouble().clamp(
+      0,
+      maxSecond,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text("Music Player"),
